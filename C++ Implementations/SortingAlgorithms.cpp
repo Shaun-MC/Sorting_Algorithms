@@ -69,7 +69,7 @@ void SortingAlgorithms::Merge(vector<int>& container, const int lower_bound, con
     // Bounds of the left sub-array
     int lhs1 = lower_bound, rhs1 = middle_index;
 
-    // Bounds of the right sub-array
+    // Bounds of the right sub-array 
     int lhs2 = middle_index + 1, rhs2 = upper_bound;
 
     // Merge the 2 sub-arrays until either of the list runs to its last index
@@ -109,7 +109,7 @@ void SortingAlgorithms::Merge(vector<int>& container, const int lower_bound, con
     }
 
 
-    delete curr_list;
+    delete[] curr_list;
 }
 
 // Iterative Merge Sort
