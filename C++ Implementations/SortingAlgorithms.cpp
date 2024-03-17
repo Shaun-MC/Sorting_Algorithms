@@ -5,7 +5,7 @@
 // ------------------------------------------------------------------------------------------------
 
 // Standard Bubble Sort Algorithm
-void SortingAlgorithms::BubbleSort(vector<int>& container, const int lower_bound, const int upper_bound) {
+void SortingAlgorithms::BubbleSort(vector<int>& container, const int lower_bound, const int upper_bound) { // UNTESTED
 
     for (int i = lower_bound; i < upper_bound; i++) {
 
@@ -20,7 +20,7 @@ void SortingAlgorithms::BubbleSort(vector<int>& container, const int lower_bound
 }
 
 // Standard Insertion Sort Algorithm
-void SortingAlgorithms::InsertionSort(vector<int>& container, const int lower_bound, const int upper_bound) {
+void SortingAlgorithms::InsertionSort(vector<int>& container, const int lower_bound, const int upper_bound) { // UNTESTED
 
     // Provides the lhs boundary the traversal_index cannot go behind
     int window_slider = lower_bound;
@@ -30,7 +30,7 @@ void SortingAlgorithms::InsertionSort(vector<int>& container, const int lower_bo
         // Started at the next index that needs to be sorted
         int traversal_index = window_slider;
 
-        // Keeps the traversal index from leaving the lower_bound
+        // First comparison keeps the traversal index from leaving the lower_bound
 		while ((traversal_index > lower_bound) && (container[traversal_index - 1] > container[traversal_index])) {
 			
 			swap(container[traversal_index - 1], container[traversal_index]);
@@ -41,7 +41,7 @@ void SortingAlgorithms::InsertionSort(vector<int>& container, const int lower_bo
 }
 
 // Standard Recursive Merge Sort Algorithm
-void SortingAlgorithms::RecursiveMergeSort(vector<int>& container, const int lower_bound, const int upper_bound) {
+void SortingAlgorithms::RecursiveMergeSort(vector<int>& container, const int lower_bound, const int upper_bound) { // UNTESTED
 
     if (lower_bound < upper_bound) {
 
@@ -55,7 +55,7 @@ void SortingAlgorithms::RecursiveMergeSort(vector<int>& container, const int low
 }
 
 // Helper Function
-void SortingAlgorithms::Merge(vector<int>& container, const int lower_bound, const int middle_index, const int upper_bound) {
+void SortingAlgorithms::Merge(vector<int>& container, const int lower_bound, const int middle_index, const int upper_bound) { // UNTESTED
 
     // Size of the required list of values
     int size = upper_bound - lower_bound + 1;
@@ -113,7 +113,7 @@ void SortingAlgorithms::Merge(vector<int>& container, const int lower_bound, con
 }
 
 // Iterative Merge Sort
-void SortingAlgorithms::IterativeMergeSort(vector<int>& container, const int lower_bound, const int upper_bound) {
+void SortingAlgorithms::IterativeMergeSort(vector<int>& container, const int lower_bound, const int upper_bound) { // UNTESTED
 
 
     int sorting_length = (upper_bound - lower_bound) + 1;
@@ -180,11 +180,58 @@ void SortingAlgorithms::IterativeMergeSort(vector<int>& container, const int low
     }
 }
 
-// Heap Sort
+void SortingAlgorithms::HeapSort(vector<int>& container, const int lower_bound, const int upper_bound) { // UNTESTED
 
-void SortingAlgorithms::ShellSort(vector<int>& container, const int lower_bound, const int upper_bound) {
+    // Creates a MAX HEAP in place then pops the root off and places it at the end of the subarray
 
-    // Starting from...
+    // Treats the container as a binary tree
+    // Uses the lower_bound as the first 'root' index
+    
+    // Build the first itertions of the MAX HEAP
+    for (int current_index = lower_bound; current_index < upper_bound; current_index++) {
+        
+        Heapify(container, current_index, upper_bound);
+    }
+
+    // Extract elements from the heap one by one
+    for (int i = upper_bound - 1; i >= lower_bound; i--) {
+        
+        // Move current root to the end
+        swap(container[lower_bound], container[i]);
+
+        // Call heapify on the reduced heap
+        Heapify(container, lower_bound, i);
+    }
+}
+
+// Implement the bounds chekcing 
+void SortingAlgorithms::Heapify(vector<int>& container, const int current_index, const int upper_bound) { // UNTESTED
+
+    int largest = current_index; 
+    int left_child = 2 * current_index + 1; 
+    int right_child = 2 * current_index + 2; 
+
+    // If left child is larger than root
+    if (left_child < upper_bound && container[left_child] > container[largest])
+        largest = left_child;
+
+    // If right child is larger than largest 
+    if (right_child < upper_bound && container[right_child] > container[largest])
+        largest = right_child;
+
+    // If largest is not root
+    if (largest != current_index) {
+        
+        swap(container[current_index], container[largest]);
+
+        Heapify(container, largest, upper_bound);
+    }
+}
+
+void SortingAlgorithms::ShellSort(vector<int>& container, const int lower_bound, const int upper_bound) { // UNTESTED
+
+    // Starting with a gap size of half the containter
+    // Decrementing the gap sizes using Sedgewick's optimization
     for (int gap = upper_bound / 2; gap > 0; gap = (gap == 2) ? 1 : int(gap / 2.2)) {
 
         for (int unsorted = gap + lower_bound; unsorted < upper_bound + 1; unsorted++) {
@@ -193,6 +240,7 @@ void SortingAlgorithms::ShellSort(vector<int>& container, const int lower_bound,
 
             int j = unsorted;
 
+            // Standard comparison and bounds checking
             for (; (j >= gap) && (nextItem < container[j - gap]) && (j - gap >= lower_bound) && (j >= lower_bound); j -= gap) {
 
                 container[j] = container[j - gap];
@@ -203,7 +251,7 @@ void SortingAlgorithms::ShellSort(vector<int>& container, const int lower_bound,
     }
 }
 
-void SortingAlgorithms::QuickSort(vector<int>& container, const int lower_bound, const int upper_bound) {
+void SortingAlgorithms::QuickSort(vector<int>& container, const int lower_bound, const int upper_bound) { // UNTESTED
 
     static const int kQSMinSize = 12;
 
@@ -216,21 +264,25 @@ void SortingAlgorithms::QuickSort(vector<int>& container, const int lower_bound,
 
         int pivot_index = Partition(container, lower_bound, upper_bound);
 
+        // Breaking down the container into smaller subarrays
         QuickSort(container, lower_bound, pivot_index - 1);
         QuickSort(container, pivot_index + 1, upper_bound);
     }
 }
 
 // Helper Functions
-int SortingAlgorithms::Partition(vector<int>& container, const int lower_bound, const int upper_bound) {
+int SortingAlgorithms::Partition(vector<int>& container, const int lower_bound, const int upper_bound) { // UNTESTED
 
     bool done = false;
 	int pivot_value = FindPlacePivot(container, lower_bound, upper_bound);
 
+    // First index of the subarray is set in F.P.P(), already sorted
 	int index_from_left = lower_bound + 1;    
+
+    // Last two index of the subarray are the pivot and a value greater than the pivot, I.E. already sorted
     int index_from_right = upper_bound - 2;   
 
-    // Sort current chunck of container
+    // Sort current sub-array
     while (!done) {
 
         while (container[index_from_left] < pivot_value) {
@@ -255,6 +307,7 @@ int SortingAlgorithms::Partition(vector<int>& container, const int lower_bound, 
         }
     }
 
+    // Place the pivot value in the correct location
     swap(container[index_from_left], container[upper_bound - 1]);
 	
 	int pivot_index = index_from_left;
@@ -262,8 +315,9 @@ int SortingAlgorithms::Partition(vector<int>& container, const int lower_bound, 
 	return pivot_index;
 }
 
-int SortingAlgorithms::FindPlacePivot(vector<int>& container, const int lower_bound, const int upper_bound) {
+int SortingAlgorithms::FindPlacePivot(vector<int>& container, const int lower_bound, const int upper_bound) { // UNTESTED
 
+    // Uses the average of the first, middle and last index as the pivot value
     int middle_index = (lower_bound + upper_bound) / 2;
 
     if (container[lower_bound] > container[upper_bound]) {
@@ -289,5 +343,54 @@ int SortingAlgorithms::FindPlacePivot(vector<int>& container, const int lower_bo
 }
 
 // RADIX
+void SortingAlgorithms::RadixSort(vector<int>& container, const int lower_bound, const int upper_bound) { // UNTESTED
 
+    // Find the maximum number to know the number of digits
+    int max = container[lower_bound];
 
+    for (int i = lower_bound + 1; i < upper_bound; i++) {
+
+        if (container[i] > max) {
+
+            max = container[i];
+        }
+    }
+
+    // Do counting sort for every digit
+    for (int exp = 1; max / exp > 0; exp *= 10) {
+
+        CountingSort(container, lower_bound, upper_bound, exp);
+    }
+}
+
+// Helper Function
+void SortingAlgorithms::CountingSort(vector<int>& container, const int lower_bound, const int upper_bound, const int exp) { // UNTESTED
+
+    int output[upper_bound - lower_bound]; // output array
+    int i, count[10] = {0};
+
+    // Store count of occurrences in count[]
+    for (i = lower_bound; i < upper_bound; i++) {
+
+        count[(container[i] / exp) % 10]++;
+    }
+
+    // Change count[i] so that count[i] now contains actual position of this digit in output[]
+    for (i = 1; i < 10; i++) {
+
+        count[i] += count[i - 1];
+    }
+
+    // Build the output array
+    for (i = upper_bound - 1; i >= lower_bound; i--) {
+
+        output[count[(container[i] / exp) % 10] - 1] = container[i];
+        count[(container[i] / exp) % 10]--;
+    }
+
+    // Copy the output array to container[], so that container[] now contains sorted numbers according to current digit
+    for (i = lower_bound; i < upper_bound; i++) {
+
+        container[i] = output[i - lower_bound];
+    }
+}
