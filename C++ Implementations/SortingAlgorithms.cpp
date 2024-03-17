@@ -5,7 +5,7 @@
 // ------------------------------------------------------------------------------------------------
 
 // Standard Bubble Sort Algorithm
-void SortingAlgorithms::BubbleSort(vector<int>& container, const int lower_bound, const int upper_bound) { // UNTESTED
+void SortingAlgorithms::BubbleSort(vector<int>& container, const int lower_bound, const int upper_bound) { // DONE
 
     for (int i = lower_bound; i < upper_bound; i++) {
 
@@ -20,7 +20,7 @@ void SortingAlgorithms::BubbleSort(vector<int>& container, const int lower_bound
 }
 
 // Standard Insertion Sort Algorithm
-void SortingAlgorithms::InsertionSort(vector<int>& container, const int lower_bound, const int upper_bound) { // UNTESTED
+void SortingAlgorithms::InsertionSort(vector<int>& container, const int lower_bound, const int upper_bound) { // DONE
 
     // Provides the lhs boundary the traversal_index cannot go behind
     int window_slider = lower_bound;
