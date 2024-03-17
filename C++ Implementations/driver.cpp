@@ -1,41 +1,178 @@
 #include <iostream>
+#include <string>
 #include <sstream>
 #include <vector>
+#include <unistd.h>
+#include <cctype>
 
 #include "SortingAlgorithms.h"
 
 using namespace std;
 
-void ParseInput(const string& input, vector<int>& data) {
+const string CLI_header = "--Sorting# ";
 
-    string temp = "";
-    stringstream parse(input);
+const string program_header = "Shaun's Sorting Algorithm Program";
+const string input_header = CLI_header + "Enter a Digit Corresponding to the Algorithm\n" + 
+                            CLI_header + "Enter X to Exit the Program";
 
-    while (parse >> temp) {
-
-        data.push_back(stoi(temp));
-    }
-}
-
-void DisplayAlgorithms(const pair<int, string> algorithms[]) {
+void DisplayAlgorithms(const pair<int, string> algorithms[]) { // DONE
 
     for (int i = 0; i < 8; i++) {
             
-        std::cout << "(" << algorithms[i].first << ") " << algorithms[i].second << endl;
+        cout << CLI_header << "(" << algorithms[i].first << ") " << algorithms[i].second << endl;
+    }
+
+    cout << CLI_header << endl;
+}
+
+// Command line input system feels sloppy
+int GetSortingAlgorithm(const pair<int, string> algorithms[]) { // DONE
+
+    string system_input = "";
+    stringstream ss;
+    int algorithm_digit = 0;
+
+    cout << CLI_header << "What Sorting Algorithm Would You Like to Use?" << endl;
+
+    DisplayAlgorithms(algorithms);
+
+    cout << input_header << endl;
+
+    cout << CLI_header;
+
+    getline(cin, system_input);
+    ss << system_input;
+
+    // Will either equal 0, meaning the input is a character
+    // or a digit, meaning the input is a number
+    ss >> algorithm_digit;
+
+    if (algorithm_digit == 0);
+
+    else if (algorithm_digit <= 0 || algorithm_digit > 8) {
+
+        do {
+
+            cout << CLI_header << endl;
+            cout << CLI_header << "--Invalid Input--" << endl;;
+            cout << input_header << endl;
+
+            sleep(1);
+
+            DisplayAlgorithms(algorithms);
+
+            cout << CLI_header;
+
+            system_input.clear();
+            ss.clear();
+
+            getline(cin, system_input);
+            
+            ss << system_input;
+
+            if (!(ss >> algorithm_digit)) {
+                
+                algorithm_digit = 0;
+                break;
+            }
+        } while (algorithm_digit <= 0 || algorithm_digit > 8);
+    }
+
+    // Return ranges from 0 to 8
+    return algorithm_digit;
+}
+
+void ParseInputData(const string& input_data, vector<int>& container) { // WORKS FOR INTEGERS
+
+    stringstream ss(input_data);
+    string temp;
+
+    while (ss >> temp) {
+
+        container.push_back(stoi(temp));
     }
 }
 
-void DisplaySortedInput(const vector<int>& data) {
+void ParseInputIndexs(const string& input_indexs, int& start_index, int& end_index) { // DONE
+
+    stringstream ss(input_indexs);
+    string temp;
+
+    ss >> temp;
+    start_index = stoi(temp);
+
+    ss >> temp;
+    end_index = stoi(temp);
+}
+
+void GetDataToSort(vector<int>& container) { // DONE
+    
+    string input_data = "";
+
+    // Display: What Input Would You Like to Sort (Start w/ Ints, then templatize to add chars, strings, etc.,) - Input of the Same Type
+    cout << CLI_header << "What Data Would You Like to Sort? (Integers Only)" << endl;
+
+    cout << CLI_header;
+            
+    getline(cin, input_data);
+
+    ParseInputData(input_data, container);
+}
+
+void GetIndexs(const int container_size, int& start, int& end) { // DONE
+
+    string input_indexs = "";
+
+    cout << CLI_header << "What Indexs Would You Like to Sort?" << endl;
+
+    cout << CLI_header;
+
+    do {
+
+        getline(cin, input_indexs);
+
+        ParseInputIndexs(input_indexs, start, end);
+
+        if (start < 0 || start >= container_size || end < 0 || end >= container_size) {
+            
+            cout << CLI_header << endl;
+            cout << CLI_header << "--Invalid Input--" << endl;
+            cout << CLI_header << "The Indexs Must Be Within the Range of the Data" << endl;
+
+            cout << CLI_header;
+        }
+
+    } while (start < 0 || start >= container_size || end < 0 || end >= container_size);
+ 
+}
+
+void DisplayContainer(const vector<int>& data) {
 
     for (int i = 0; i < data.size(); i++) {
 
-        std::cout << data[i] << " ";
+        cout << data[i] << " ";
     }
 
-    std::cout << endl;
+    cout << endl;
+    cout << CLI_header << endl;
+}
+
+bool ContinueCheck() {
+
+    char continue_program_input = ' ';
+    // Ask the User if They Would Like to Continue Using the Program
+    cout << CLI_header << "Would You Like to Continue Using the Program? (Y/N)" << endl;
+
+    cout << CLI_header;
+
+    cin >> continue_program_input;
+
+    return (continue_program_input == 'Y' || continue_program_input == 'y');
 }
 
 int main() {
+
+    system("clear");
 
     const pair<int, string> kAlgorithms[] = {
         {1, "Bubble Sort"},
@@ -48,113 +185,79 @@ int main() {
         {8, "Radix Sort"}
     };
 
-    const string program_header = "Shaun's Sorting Algorithm Program";
-    const string input_header = "Enter A Digit Corresponding To The Algorithm or X to Exit the Program:";
-    const string CLI_header = "--Sorting# ";
-
     int algorithm_digit = 0;
     bool continue_program = true;
 
-    std::cout << "~~~Welcome To My Sorting Algorithms Program~~~" << endl;
+    cout << "~~~Welcome To My Sorting Algorithms Program~~~" << endl << endl;
+    
+    sleep(1);
 
     do {
 
-        std::cout << "What Sorting Algorithm Would You Like to Use?" << endl;
+        // Determine the Sorting Algorithm to Use
+        algorithm_digit = GetSortingAlgorithm(kAlgorithms);
 
-        DisplayAlgorithms(kAlgorithms);
-
-        std::cout << "Enter A Digit Corresponding To The Algorithm or X to Exit the Program: " << endl;
-
-        std::cout << CLI_header;
-
-        std::cin >> algorithm_digit;
-
-        // If the cin fails, input is assumed to be a character and the program exits
-        if (!(std::cin >> algorithm_digit)) { 
+        if (algorithm_digit == 0) {
 
             continue_program = false;
-        } else if (algorithm_digit <= 0 || algorithm_digit > 8) {
+        } else {
 
-            do {
-
-                std::cout << "Invalid Input. " << input_header << endl;
-
-                DisplayAlgorithms(kAlgorithms);
-
-                std::cout << CLI_header;
-
-                if (!(std::cin >> algorithm_digit)) {
-
-                    continue_program = false;
-                }
-            } while (algorithm_digit <= 0 || algorithm_digit > 8 || continue_program == false);
-        }
-
-        if (continue_program) {
-
-            string sorting_input = "";
+            vector<int> container;
             int start_index = 0, end_index = 0;
-            char continue_program_input = ' ';
 
             // Clear the Screen
-            system("cls");
+            system("clear");
 
             // Display the Program Header
-            std::cout << program_header << endl;
+            cout << program_header << endl << endl;
 
             // Display the Name of the Algorithm
-            std::cout << kAlgorithms[algorithm_digit].second << endl;
+            cout << CLI_header << kAlgorithms[algorithm_digit - 1].second << endl << CLI_header << endl;
 
-            // Display: What Input Would You Like to Sort (Start w/ Ints, then templatize to add chars, strings, etc.,) - Input of the Same Type
-            std::cout << "What Data Would You Like to Sort? (Integers Only)" << endl;
-           
-            // Check if Data Is all the same type - eventually check the data
-            std::cin >> sorting_input;
+            GetDataToSort(container);
 
-            // Get the beginning and ending indexes of the input data
-            std::cout << "What Are the Bounds of the Sorted Input? (Start and End Indexes)" << endl;
+            cout << CLI_header << endl;
 
-            std::cin >> start_index >> end_index;
+            GetIndexs(container.size(), start_index, end_index);
 
-            // Create a vector of the input data
-            vector<int> data;
+            cout << CLI_header << endl;
 
-            ParseInput(sorting_input, data);
+            cout << CLI_header << "Unsorted Input: ";
+            DisplayContainer(container);
 
             // Executes the Sorting Algorithm
             switch (algorithm_digit) {
 
                 case 1: 
-                SortingAlgorithms::BubbleSort(data, start_index, end_index);
+                SortingAlgorithms::BubbleSort(container, start_index, end_index);
                 break;
 
                 case 2: 
-                SortingAlgorithms::InsertionSort(data, start_index, end_index);
-                
-
-                case 3:
-                SortingAlgorithms::RecursiveMergeSort(data, start_index, end_index);
+                SortingAlgorithms::InsertionSort(container, start_index, end_index);
                 break;
                 
-
+                case 3:
+                SortingAlgorithms::RecursiveMergeSort(container, start_index, end_index);
+                break;
+                
                 case 4:
-                SortingAlgorithms::IterativeMergeSort(data, start_index, end_index);
+                SortingAlgorithms::IterativeMergeSort(container, start_index, end_index);
                 break; 
             
                 case 5: 
-                SortingAlgorithms::HeapSort(data, start_index, end_index);
+                SortingAlgorithms::HeapSort(container, start_index, end_index);
                 break;
             
                 case 6:
-                SortingAlgorithms::ShellSort(data, start_index, end_index);
+                SortingAlgorithms::ShellSort(container, start_index, end_index);
                 break; 
             
                 case 7:
-                SortingAlgorithms::QuickSort(data, start_index, end_index);
+                SortingAlgorithms::QuickSort(container, start_index, end_index);
                 break; 
                 
                 case 8:
-                SortingAlgorithms::RadixSort(data, start_index, end_index);
+                SortingAlgorithms::RadixSort(container, start_index, end_index);
                 break; 
 
                 // Default case is handled before the switch statement executes
@@ -163,24 +266,15 @@ int main() {
             }
 
             // Display the Sorted Data
-            DisplaySortedInput(data);
+            cout << CLI_header << "Sorted Output: ";
+            DisplayContainer(container);
 
-            // Ask the User if They Would Like to Continue Using the Program
-            std::cout << "Would You Like to Continue Using the Program? (Y/N)" << endl;
-
-            std::cout << CLI_header;
-
-            std::cin >> continue_program_input;
-
-            if (continue_program_input == 'N' || continue_program_input == 'n') {
-
-                continue_program = false;
-            }
+            continue_program = ContinueCheck();
         }
 
     } while (continue_program);
 
-    std::cout << "Thank You For Using My Sorting Algorithms Program!" << endl;
+    cout << CLI_header << "Goodbye" << endl;
         
     return 0;
 }
